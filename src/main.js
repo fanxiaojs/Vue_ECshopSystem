@@ -8,8 +8,11 @@ import Element from 'Element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 //引入样式
 import './assets/css/index.css'
-
+//引入axios 
+import axios from 'axios'
 Vue.use(Element)
+//将axios挂载在Vue的原型中
+Vue.prototype.$http = axios
 
 Vue.config.productionTip = false
 

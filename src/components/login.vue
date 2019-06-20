@@ -4,7 +4,7 @@
       <!-- el-form:表单的管理容器 label-width:显示文本宽度 -->
       <el-form
         label-position="top"
-        :model="ruleForm"
+        :model="userObj"
         status-icon
         ref="ruleForm"
         label-width="100px"
@@ -12,13 +12,13 @@
       >
         <h2>用户登录</h2>
         <el-form-item label="帐号">
-          <el-input type="text"></el-input>
+          <el-input type="text" v-model="userObj.username"></el-input>
         </el-form-item>
         <el-form-item label="密码">
-          <el-input type="password"></el-input>
+          <el-input type="password" v-model="userObj.password"></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="submitForm('ruleForm')" class="btn">登录</el-button>
+          <el-button type="primary" class="btn" @click.prevent.13="login">登录</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -26,7 +26,32 @@
 </template>
 
 <script>
-export default {};
+export default {
+  data() {
+    return {
+      userObj: {
+        username: "",
+        password: ""
+      }
+    };
+  },
+  methods: {
+    login() {
+      this.$http({
+        method: "post",
+        url: "http://localhost:8888/api/private/v1/login",
+        data: this.userObj
+      }).then(res => {
+        let { data, meta } = res.data;
+        if (meta.status == 200) {
+          this.$router.push("/111");
+        } else {
+          alert(meta.msg);
+        }
+      });
+    }
+  }
+};
 </script>
 
 <style>
