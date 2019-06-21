@@ -12,7 +12,7 @@ export default new Router({
     //添加一个login路由
     {
       path: '/login',
-      name: '.login',
+      name: 'login',
       component: Login
     },
     //添加一个home路由
