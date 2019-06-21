@@ -44,7 +44,8 @@ export default {
       }).then(res => {
         let { data, meta } = res.data;
         if (meta.status == 200) {
-          this.$router.push("/111");
+          this.$router.push("/home");
+          localStorage.setItem("token", data.token);
         } else {
           alert(meta.msg);
         }
