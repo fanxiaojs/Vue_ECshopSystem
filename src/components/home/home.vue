@@ -20,7 +20,7 @@
     <el-container>
       <!-- 侧边栏区域 -->
       <el-aside width="200px">
-        <el-menu class="el-menu-vertical-demo">
+        <el-menu :unique-opened="true" :router="true" class="el-menu-vertical-demo myside">
           <el-submenu index="1">
             <template slot="title">
               <i class="el-icon-location"></i>
@@ -119,15 +119,16 @@ export default {};
 
   line-height: 200px;
 }
-
 .el-main {
   background-color: #e9eef3;
   color: #333;
   text-align: center;
   line-height: 160px;
 }
-
 .el-container {
+  height: 100%;
+}
+.myside {
   height: 100%;
 }
 </style>
