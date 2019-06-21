@@ -18,7 +18,7 @@ export default new Router({
     //添加一个home路由
     {
       path: '/',
-      name: '.home',
+      name: 'home',
       component: Home
     }
   ]
