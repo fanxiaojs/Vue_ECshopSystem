@@ -59,8 +59,12 @@ export default {
             if (meta.status == 200) {
               this.$router.push("/home");
               localStorage.setItem("token", data.token);
+              this.$message({
+                message: meta.msg,
+                type: "success"
+              });
             } else {
-              alert(meta.msg);
+              this.$message.error(meta.msg);
             }
           });
         }
