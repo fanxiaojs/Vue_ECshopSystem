@@ -17,7 +17,7 @@
         </div>
       </el-col>
       <el-col :span="4">
-        <el-button type="success" plain class="addusers">添加用户</el-button>
+        <el-button @click="openAdd" type="success" plain class="addusers">添加用户</el-button>
       </el-col>
     </el-row>
     <!-- 表格区域 -->
@@ -50,6 +50,32 @@
       :total="total"
       layout="total, sizes, prev, pager, next, jumper"
     ></el-pagination>
+    <el-dialog title="添加用户" :visible.sync="addDialog">
+      <el-form>
+        <el-form-item label="用户名" :label-width="formLabelWidth">
+          <el-input autocomplete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <el-form>
+        <el-form-item label="密码" :label-width="formLabelWidth">
+          <el-input autocomplete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <el-form>
+        <el-form-item label="邮箱" :label-width="formLabelWidth">
+          <el-input autocomplete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <el-form>
+        <el-form-item label="电话" :label-width="formLabelWidth">
+          <el-input autocomplete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="addDialog = false">取 消</el-button>
+        <el-button type="primary" @click="addDialog = false">确 定</el-button>
+      </div>
+    </el-dialog>
   </el-card>
 </template>
 
@@ -67,7 +93,10 @@ export default {
       pagesizes: [2, 3, 5],
       //总条数
       total: 0,
-      qurey: ""
+      qurey: "",
+      //控制添加对话框的显示与隐藏
+      addDialog: true,
+      formLabelWidth: "80px"
     };
   },
   methods: {
@@ -106,6 +135,10 @@ export default {
     //点击搜索按钮是触发
     search() {
       this.getData();
+    },
+    //打开新增面板
+    openAdd() {
+      this.addDialog = true;
     }
   },
   mounted() {
