@@ -11,8 +11,8 @@
     <el-row>
       <el-col :span="6">
         <div style="margin-top: 15px;">
-          <el-input placeholder="请输入内容" class="input-with-select">
-            <el-button slot="append" icon="el-icon-search"></el-button>
+          <el-input v-model="qurey" placeholder="请输入内容" class="input-with-select">
+            <el-button @click.prevent="search" slot="append" icon="el-icon-search"></el-button>
           </el-input>
         </div>
       </el-col>
@@ -66,7 +66,8 @@ export default {
       //page容量选择
       pagesizes: [2, 3, 5],
       //总条数
-      total: 0
+      total: 0,
+      qurey: ""
     };
   },
   methods: {
@@ -100,6 +101,10 @@ export default {
     //  页容量改变时候触发
     sizeC(pagesize) {
       this.pagesize = pagesize;
+      this.getData();
+    },
+    //点击搜索按钮是触发
+    search() {
       this.getData();
     }
   },
