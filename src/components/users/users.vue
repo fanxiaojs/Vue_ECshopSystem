@@ -40,7 +40,14 @@
       </el-table-column>
     </el-table>
     <!-- 分页区域 -->
-    <el-pagination></el-pagination>
+    <!-- :current-page是当前页   page-sizes是设置当前的页容量    page-size当前的页容量 -->
+    <el-pagination
+      :current-page="pagenum"
+      :page-sizes="pagesizes"
+      :page-size="pagesize"
+      :total="total"
+      layout="total, sizes, prev, pager, next, jumper"
+    ></el-pagination>
   </el-card>
 </template>
 
@@ -50,8 +57,14 @@ export default {
     return {
       tableData: [],
       qurey: "",
+      //当前页
       pagenum: 1,
-      pagesize: 5
+      //页容量
+      pagesize: 3,
+      //page容量选择
+      pagesizes: [2, 3, 5],
+      //总条数
+      total: 0
     };
   },
   methods: {
@@ -71,6 +84,7 @@ export default {
         //判断
         if (meta.status == 200) {
           this.tableData = data.users;
+          this.total = data.total;
         }
       });
     }
