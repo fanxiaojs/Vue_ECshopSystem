@@ -42,6 +42,8 @@
     <!-- 分页区域 -->
     <!-- :current-page是当前页   page-sizes是设置当前的页容量    page-size当前的页容量 -->
     <el-pagination
+      @size-change="sizeC"
+      @current-change="crr"
       :current-page="pagenum"
       :page-sizes="pagesizes"
       :page-size="pagesize"
@@ -68,6 +70,7 @@ export default {
     };
   },
   methods: {
+    //获取数据
     getData() {
       this.$http({
         //请求后台的接口每个接口都需要在请求头中添加token
@@ -87,9 +90,21 @@ export default {
           this.total = data.total;
         }
       });
+    },
+    // 当页面改变时发生事件    currentPage是当前页
+    crr(currentPage) {
+      this.pagenum = currentPage;
+      //重新获取数据
+      this.getData();
+    },
+    //  页容量改变时候触发
+    sizeC(pagesize) {
+      this.pagesize = pagesize;
+      this.getData();
     }
   },
   mounted() {
+    //页面一打开获取数据并渲染到页面
     this.getData();
   }
 };
