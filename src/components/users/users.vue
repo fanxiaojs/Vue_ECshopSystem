@@ -50,30 +50,30 @@
       :total="total"
       layout="total, sizes, prev, pager, next, jumper"
     ></el-pagination>
-    <el-dialog title="添加用户" :visible.sync="addDialog">
+    <el-dialog title="添加用户" :visible.sync="addDialog" v-model="addUsers">
       <el-form>
         <el-form-item label="用户名" :label-width="formLabelWidth">
-          <el-input autocomplete="off"></el-input>
+          <el-input v-model="addUsers.username" autocomplete="off"></el-input>
         </el-form-item>
       </el-form>
       <el-form>
         <el-form-item label="密码" :label-width="formLabelWidth">
-          <el-input autocomplete="off"></el-input>
+          <el-input v-model="addUsers.password" autocomplete="off"></el-input>
         </el-form-item>
       </el-form>
       <el-form>
         <el-form-item label="邮箱" :label-width="formLabelWidth">
-          <el-input autocomplete="off"></el-input>
+          <el-input v-model="addUsers.email" autocomplete="off"></el-input>
         </el-form-item>
       </el-form>
       <el-form>
         <el-form-item label="电话" :label-width="formLabelWidth">
-          <el-input autocomplete="off"></el-input>
+          <el-input v-model="addUsers.mobile" autocomplete="off"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="addDialog = false">取 消</el-button>
-        <el-button type="primary" @click="addDialog = false">确 定</el-button>
+        <el-button type="primary" @click="addUsersFn">确 定</el-button>
       </div>
     </el-dialog>
   </el-card>
@@ -96,7 +96,8 @@ export default {
       qurey: "",
       //控制添加对话框的显示与隐藏
       addDialog: true,
-      formLabelWidth: "80px"
+      formLabelWidth: "80px",
+      addUsers: { username: "", password: "", email: "", mobile: "" }
     };
   },
   methods: {
@@ -139,6 +140,29 @@ export default {
     //打开新增面板
     openAdd() {
       this.addDialog = true;
+    },
+    addUsersFn() {
+      this.$http({
+        method: "post",
+        url: "http://localhost:8888/api/private/v1/users",
+        data: this.addUsers,
+        headers: {
+          Authorization: localStorage.getItem("token")
+        }
+      }).then(res => {
+        if (res.data.meta.status == 201) {
+          this.$message({
+            showClose: true,
+            message: res.data.meta.msg,
+            type: "success"
+          });
+          this.getData;
+        } else {
+          this.$message.error(res.data.meta.msg);
+        }
+        this.addUsers = {};
+        this.addDialog = false;
+      });
     }
   },
   mounted() {
