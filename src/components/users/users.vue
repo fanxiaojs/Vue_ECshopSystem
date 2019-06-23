@@ -189,12 +189,9 @@ export default {
       this.$http({
         //请求后台的接口每个接口都需要在请求头中添加token
         method: "get",
-        url: `http://localhost:8888/api/private/v1/users?query=${
-          this.qurey
-        }&pagenum=${this.pagenum}&pagesize=${this.pagesize}`,
-        headers: {
-          Authorization: localStorage.getItem("token")
-        }
+        url: `users?query=${this.qurey}&pagenum=${this.pagenum}&pagesize=${
+          this.pagesize
+        }`
       }).then(res => {
         //解构
         let { data, meta } = res.data;
@@ -234,11 +231,8 @@ export default {
     addUsersFn() {
       this.$http({
         method: "post",
-        url: "http://localhost:8888/api/private/v1/users",
-        data: this.addUsers,
-        headers: {
-          Authorization: localStorage.getItem("token")
-        }
+        url: "users",
+        data: this.addUsers
       }).then(res => {
         if (res.data.meta.status == 201) {
           this.$message({
@@ -263,7 +257,7 @@ export default {
       }).then(() => {
         this.$http({
           method: "delete",
-          url: `http://localhost:8888/api/private/v1/users/${id}`,
+          url: `users/${id}`,
           headers: {
             Authorization: localStorage.getItem("token")
           }
@@ -283,10 +277,7 @@ export default {
     openEdit(id) {
       this.$http({
         method: "get",
-        url: `http://localhost:8888/api/private/v1/users/${id}`,
-        headers: {
-          Authorization: localStorage.getItem("token")
-        }
+        url: `users/${id}`
       }).then(res => {
         let { data } = res.data;
         this.editUsers = data;
@@ -296,13 +287,10 @@ export default {
     editUsersFn() {
       this.$http({
         method: "put",
-        url: `http://localhost:8888/api/private/v1/users/${this.editUsers.id}`,
+        url: `users/${this.editUsers.id}`,
         data: {
           mobile: this.editUsers.mobile,
           email: this.editUsers.email
-        },
-        headers: {
-          Authorization: localStorage.getItem("token")
         }
       }).then(res => {
         let { meta } = res.data;
@@ -322,10 +310,7 @@ export default {
       this.rolesDialog = true;
       this.$http({
         method: "get",
-        url: `http://localhost:8888/api/private/v1/users/${id}`,
-        headers: {
-          Authorization: localStorage.getItem("token")
-        }
+        url: `users/${id}`
       }).then(res => {
         //获取数据
         let { data } = res.data;
@@ -333,7 +318,7 @@ export default {
         //获取下拉框中的数据
         this.$http({
           method: "get",
-          url: "http://localhost:8888/api/private/v1/roles",
+          url: "roles",
           headers: {
             Authorization: localStorage.getItem("token")
           }
@@ -348,12 +333,9 @@ export default {
     rolesAllot() {
       this.$http({
         method: "put",
-        url: `http://localhost:8888/api/private/v1/users/${this.roles.id}/role`,
+        url: `users/${this.roles.id}/role`,
         data: {
           rid: this.roles.rid
-        },
-        headers: {
-          Authorization: localStorage.getItem("token")
         }
       }).then(res => {
         let { meta, data } = res.data;
@@ -373,10 +355,7 @@ export default {
     state(uid, type) {
       this.$http({
         method: "put",
-        url: `http://localhost:8888/api/private/v1/users/${uid}/state/${type}`,
-        headers: {
-          Authorization: localStorage.getItem("token")
-        }
+        url: `users/${uid}/state/${type}`
       }).then(res => {
         let { meta } = res.data;
         if (meta.status == 200) {

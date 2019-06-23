@@ -52,7 +52,7 @@ export default {
           //发送登录请求
           this.$http({
             method: "post",
-            url: "http://localhost:8888/api/private/v1/login",
+            url: "login",
             data: this.userObj
           }).then(res => {
             let { data, meta } = res.data;
