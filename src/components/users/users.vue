@@ -47,7 +47,13 @@
             size="mini"
             @click.prevent="del(scope.row.id)"
           ></el-button>
-          <el-button type="success" icon="el-icon-check" plain size="mini"></el-button>
+          <el-button
+            type="success"
+            icon="el-icon-check"
+            plain
+            size="mini"
+            @click="openRoles(scope.row.id)"
+          ></el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -112,6 +118,32 @@
         <el-button type="primary" @click.13="editUsersFn">确 定</el-button>
       </div>
     </el-dialog>
+    <!-- 角色分配对话框 -->
+    <el-dialog title="角色分配" :visible.sync="rolesDialog">
+      <el-form>
+        <el-form-item label="用户名" :label-width="formLabelWidth">
+          <el-input :disabled="true" v-model="roles.username" autocomplete="off"></el-input>
+        </el-form-item>
+
+        <!-- 下拉框 -->
+        <el-form-item label="选择角色" :label-width="formLabelWidth">
+          <el-select v-model="roles.rid" placeholder="请选择">
+            <el-option label="请选择" :value="-1"></el-option>
+            <el-option
+              v-for="item in selectArr"
+              :key="item.id"
+              :label="item.roleName"
+              :value="item.id"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <!-- btn -->
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="rolesDialog = false">取 消</el-button>
+        <el-button type="primary" @click="rolesAllot">确 定</el-button>
+      </div>
+    </el-dialog>
   </el-card>
 </template>
 
@@ -137,7 +169,13 @@ export default {
       //控制编辑对话框的显示隐藏
       editDialog: false,
       //编辑用户的数据源
-      editUsers: { username: "", id: "", email: "", mobile: "" }
+      editUsers: {},
+      //角色分配的数据源
+      roles: {},
+      //角色分配对话框的显示隐藏
+      rolesDialog: false,
+      //下拉框中的数据源
+      selectArr: []
     };
   },
   methods: {
@@ -272,6 +310,58 @@ export default {
             type: "success"
           });
           this.getData();
+        }
+      });
+    },
+    openRoles(id) {
+      this.rolesDialog = true;
+      this.$http({
+        method: "get",
+        url: `http://localhost:8888/api/private/v1/users/${id}`,
+        headers: {
+          Authorization: localStorage.getItem("token")
+        }
+      }).then(res => {
+        //获取数据
+        let { data } = res.data;
+        this.roles = data;
+        //获取下拉框中的数据
+        this.$http({
+          method: "get",
+          url: "http://localhost:8888/api/private/v1/roles",
+          headers: {
+            Authorization: localStorage.getItem("token")
+          }
+        }).then(res => {
+          let { meta, data } = res.data;
+          if (meta.status == 200) {
+            this.selectArr = data;
+          }
+        });
+      });
+    },
+    rolesAllot() {
+      this.$http({
+        method: "put",
+        url: `http://localhost:8888/api/private/v1/users/${this.roles.id}/role`,
+        data: {
+          rid: this.roles.rid
+        },
+        headers: {
+          Authorization: localStorage.getItem("token")
+        }
+      }).then(res => {
+        let { meta, data } = res.data;
+        if (meta.status == 200) {
+          this.$message({
+            showClose: true,
+            message: meta.msg,
+            type: "success"
+          });
+          this.rolesDialog = false;
+          this.getData;
+        } else {
+          this.$message.error(meta.msg);
         }
       });
     }
