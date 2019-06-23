@@ -32,9 +32,16 @@
         </template>
       </el-table-column>
       <el-table-column label="操作">
-        <template>
+        <template slot-scope="scope">
+          {{scope.row.id}}
           <el-button type="primary" icon="el-icon-edit" plain size="mini"></el-button>
-          <el-button type="danger" icon="el-icon-delete" plain size="mini"></el-button>
+          <el-button
+            type="danger"
+            icon="el-icon-delete"
+            plain
+            size="mini"
+            @click.prevent="del(scope.row.id)"
+          ></el-button>
           <el-button type="success" icon="el-icon-check" plain size="mini"></el-button>
         </template>
       </el-table-column>
@@ -50,6 +57,7 @@
       :total="total"
       layout="total, sizes, prev, pager, next, jumper"
     ></el-pagination>
+    <!-- 添加对话框 -->
     <el-dialog title="添加用户" :visible.sync="addDialog" v-model="addUsers">
       <el-form>
         <el-form-item label="用户名" :label-width="formLabelWidth">
@@ -88,16 +96,17 @@ export default {
       //当前页
       pagenum: 1,
       //页容量
-      pagesize: 3,
+      pagesize: 5,
       //page容量选择
-      pagesizes: [2, 3, 5],
+      pagesizes: [5, 10, 15],
       //总条数
       total: 0,
       qurey: "",
       //控制添加对话框的显示与隐藏
-      addDialog: true,
+      addDialog: false,
       formLabelWidth: "80px",
       addUsers: { username: "", password: "", email: "", mobile: "" }
+      // id: scope.row.id
     };
   },
   methods: {
@@ -141,6 +150,7 @@ export default {
     openAdd() {
       this.addDialog = true;
     },
+    //用户新增提交数据
     addUsersFn() {
       this.$http({
         method: "post",
@@ -162,6 +172,31 @@ export default {
         }
         this.addUsers = {};
         this.addDialog = false;
+      });
+    },
+    del(id) {
+      this.$confirm("此操作将永久删除该用户, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      }).then(() => {
+        this.$http({
+          method: "delete",
+          url: `http://localhost:8888/api/private/v1/users/${id}`,
+          headers: {
+            Authorization: localStorage.getItem("token")
+          }
+        }).then(res => {
+          let { meta } = res.data;
+          if (meta.status == 200) {
+            this.$message({
+              showClose: true,
+              message: meta.msg,
+              type: "success"
+            });
+          }
+          this.getData();
+        });
       });
     }
   },
