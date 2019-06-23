@@ -28,7 +28,12 @@
       <el-table-column prop="mobile" label="电话"></el-table-column>
       <el-table-column label="用户状态">
         <template slot-scope="scope">
-          <el-switch v-model="scope.row.mg_state" active-color="#13ce66" inactive-color="#ff4949"></el-switch>
+          <el-switch
+            v-model="scope.row.mg_state"
+            active-color="#13ce66"
+            inactive-color="#ff4949"
+            @change="state(scope.row.id,scope.row.mg_state)"
+          ></el-switch>
         </template>
       </el-table-column>
       <el-table-column label="操作">
@@ -359,6 +364,27 @@ export default {
             type: "success"
           });
           this.rolesDialog = false;
+          this.getData;
+        } else {
+          this.$message.error(meta.msg);
+        }
+      });
+    },
+    state(uid, type) {
+      this.$http({
+        method: "put",
+        url: `http://localhost:8888/api/private/v1/users/${uid}/state/${type}`,
+        headers: {
+          Authorization: localStorage.getItem("token")
+        }
+      }).then(res => {
+        let { meta } = res.data;
+        if (meta.status == 200) {
+          this.$message({
+            showClose: true,
+            message: meta.msg,
+            type: "success"
+          });
           this.getData;
         } else {
           this.$message.error(meta.msg);
