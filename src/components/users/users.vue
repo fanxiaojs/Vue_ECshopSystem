@@ -33,8 +33,13 @@
       </el-table-column>
       <el-table-column label="操作">
         <template slot-scope="scope">
-          {{scope.row.id}}
-          <el-button type="primary" icon="el-icon-edit" plain size="mini"></el-button>
+          <el-button
+            @click.prevent="openEdit(scope.row.id)"
+            type="primary"
+            icon="el-icon-edit"
+            plain
+            size="mini"
+          ></el-button>
           <el-button
             type="danger"
             icon="el-icon-delete"
@@ -84,6 +89,29 @@
         <el-button type="primary" @click="addUsersFn">确 定</el-button>
       </div>
     </el-dialog>
+    <!-- 编辑对话框 -->
+    <el-dialog title="编辑用户" :visible.sync="editDialog" v-model="editUsers">
+      <el-form>
+        <el-form-item label="用户名" :label-width="formLabelWidth">
+          <el-input :disabled="true" v-model="editUsers.username" autocomplete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <el-form>
+        <el-form-item label="邮箱" :label-width="formLabelWidth">
+          <el-input v-model="editUsers.email" autocomplete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <el-form>
+        <el-form-item label="电话" :label-width="formLabelWidth">
+          <el-input v-model="editUsers.mobile" autocomplete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      {{editUsers}}
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="editDialog = false">取 消</el-button>
+        <el-button type="primary" @click.13="editUsersFn">确 定</el-button>
+      </div>
+    </el-dialog>
   </el-card>
 </template>
 
@@ -105,8 +133,11 @@ export default {
       //控制添加对话框的显示与隐藏
       addDialog: false,
       formLabelWidth: "80px",
-      addUsers: { username: "", password: "", email: "", mobile: "" }
-      // id: scope.row.id
+      addUsers: { username: "", password: "", email: "", mobile: "" },
+      //控制编辑对话框的显示隐藏
+      editDialog: false,
+      //编辑用户的数据源
+      editUsers: { username: "", id: "", email: "", mobile: "" }
     };
   },
   methods: {
@@ -204,6 +235,44 @@ export default {
           }
           this.getData();
         });
+      });
+    },
+    openEdit(id) {
+      this.$http({
+        method: "get",
+        url: `http://localhost:8888/api/private/v1/users/${id}`,
+        headers: {
+          Authorization: localStorage.getItem("token")
+        }
+      }).then(res => {
+        let { data } = res.data;
+        this.editUsers = data;
+        this.editDialog = true;
+      });
+    },
+    editUsersFn() {
+      this.$http({
+        method: "put",
+        url: `http://localhost:8888/api/private/v1/users/${this.editUsers.id}`,
+        data: {
+          mobile: this.editUsers.mobile,
+          email: this.editUsers.email
+        },
+        headers: {
+          Authorization: localStorage.getItem("token")
+        }
+      }).then(res => {
+        let { meta } = res.data;
+        //判断
+        if (meta.status == 200) {
+          this.editDialog = false;
+          this.$message({
+            showClose: true,
+            message: meta.msg,
+            type: "success"
+          });
+          this.getData();
+        }
       });
     }
   },
