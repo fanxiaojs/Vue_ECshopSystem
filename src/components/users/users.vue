@@ -126,6 +126,12 @@ export default {
         let { data, meta } = res.data;
         //判断
         if (meta.status == 200) {
+          //修复删除小BUG代码
+          if (data.users.length == 0 && this.pagenum != 1) {
+            this.pagenum--;
+            this.getData();
+            return;
+          }
           this.tableData = data.users;
           this.total = data.total;
         }
@@ -173,6 +179,7 @@ export default {
         this.addUsers = {};
         this.addDialog = false;
       });
+      this.getData();
     },
     del(id) {
       this.$confirm("此操作将永久删除该用户, 是否继续?", "提示", {
