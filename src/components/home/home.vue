@@ -25,18 +25,18 @@ export default {
   components: {
     hHeader,
     hAside
-  },
-  mounted() {
-    //获取token
-    let token = localStorage.getItem("token");
-    //判断是否有token
-    if (!token) {
-      //提示
-      this.$message.error("请先登录");
-      //如果没有token那么就跳转到登录压面
-      this.$router.push("/login");
-    }
   }
+  // mounted() {
+  //   //获取token
+  //   let token = localStorage.getItem("token");
+  //   //判断是否有token
+  //   if (!token) {
+  //     //提示
+  //     this.$message.error("请先登录");
+  //     //如果没有token那么就跳转到登录压面
+  //     this.$router.push("/login");
+  //   }
+  // }
 };
 </script>
 

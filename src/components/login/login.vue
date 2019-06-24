@@ -57,8 +57,8 @@ export default {
           }).then(res => {
             let { data, meta } = res.data;
             if (meta.status == 200) {
-              this.$router.push("/");
               localStorage.setItem("token", data.token);
+              this.$router.push("/");
               this.$message({
                 message: meta.msg,
                 type: "success"
