@@ -2,11 +2,14 @@
   <!-- 卡片 -->
   <el-card>
     <!-- 面包屑导航 -->
-    <el-breadcrumb separator-class="el-icon-arrow-right">
+    <!-- 使用面包屑导航组件 -->
+    <Bread one="用户管理" two="用户列表"></Bread>
+
+    <!-- <el-breadcrumb separator-class="el-icon-arrow-right">
       <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
       <el-breadcrumb-item>用户管理</el-breadcrumb-item>
       <el-breadcrumb-item>用户列表</el-breadcrumb-item>
-    </el-breadcrumb>
+    </el-breadcrumb>-->
     <!-- 输入框 -->
     <el-row>
       <el-col :span="6">
@@ -153,7 +156,13 @@
 </template>
 
 <script>
+// 引入面包屑
+import Bread from "../layout/bread";
+
 export default {
+  components: {
+    Bread
+  },
   data() {
     return {
       tableData: [],
