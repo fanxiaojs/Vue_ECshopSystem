@@ -4,6 +4,38 @@
     <el-button plain size='mini' :span='6' class="btn">添加用户</el-button>
     <!-- 表格区域 -->
     <el-table :data="tableData" style="width: 100%">
+        <el-table-column type="expand">
+            <template slot-scope='scope'>
+                <!-- {{scope.row.children}} -->
+                <!-- 遍历一级权限 -->
+                {{scope.row.id}}
+                <el-row v-for='(item1,index1) in scope.row.children' :key='index1'>
+                    <!-- 生成一级权限 -->
+                    <el-col :span='4'>
+                        <el-tag closable class="tag1" @close='delRights(scope.row.id,item1.id,scope)'>{{item1.authName}}
+                            {{item1.id}}
+                        </el-tag><i class="el-icon-arrow-right"></i>
+                    </el-col>
+                    <el-col :span='20'>
+                        <!-- 遍历二级权限 -->
+                        <el-row v-for='(item2,index2) in item1.children' :key='index2'>
+                            <!-- 生成二级权限 -->
+                            <el-col :span='4'>
+                                <el-tag closable class="tag2" type='success'
+                                    @close='delRights(scope.row.id,item2.id,scope)'>
+                                    {{item2.authName}} {{item2.id}}</el-tag><i class="el-icon-arrow-right"></i>
+                            </el-col>
+                            <!-- 遍历生成三级权限 -->
+                            <el-col :span='20'>
+                                <el-tag closable class="tag3" type='warning' v-for='(item3,index3) in item2.children'
+                                    ::key="index3" @close='delRights(scope.row.id,item3.id,scope)'>
+                                    {{item3.authName}} {{item3.id}}</el-tag>
+                            </el-col>
+                        </el-row>
+                    </el-col>
+                </el-row>
+            </template>
+        </el-table-column>
         <el-table-column type="index"></el-table-column>
         <el-table-column prop="roleName" label="角色名称" width="180"></el-table-column>
         <el-table-column prop="roleDesc" label="角色描述" width="180"></el-table-column>
