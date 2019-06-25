@@ -9,7 +9,8 @@ export default {
       rightsList: [],
       defaultProps: {
         label: 'authName'
-      }
+      },
+      morenxuanzhong: []
     }
   },
   components: {
@@ -56,21 +57,36 @@ export default {
       })
     },
     //打开权限数据
-    openRoles() {
-      this.roleDialog = true
+    openRoles(rightsData) {
+      this.morenxuanzhong = []
       this.$http({
         method: 'get',
         url: 'rights/tree'
       }).then(res => {
-        console.log(res);
-
+        //解构    
         let {
           data,
           meta
         } = res.data
+        //打开面板
+        this.roleDialog = true
+        //将数据保存起来
         this.rightsList = data
+        //将所有三级权限的id添加到morenxuanzhong中
+        //遍历第一级
+        rightsData.forEach(item1 => {
+          //遍历第二级
+          item1.children.forEach(item2 => {
+            //遍历第三极
+            item2.children.forEach(item3 => {
+              this.morenxuanzhong.push(item3.id)
+            })
+          })
+        });
         if (res.status == 200) {
 
+        } else {
+          this.$message.error(meta.msg)
         }
       })
     }
