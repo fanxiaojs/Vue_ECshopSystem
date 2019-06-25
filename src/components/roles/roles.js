@@ -4,7 +4,12 @@ import Bread from '../layout/bread.vue'
 export default {
   data() {
     return {
-      tableData: []
+      tableData: [],
+      roleDialog: false,
+      rightsList: [],
+      defaultProps: {
+        label: 'authName'
+      }
     }
   },
   components: {
@@ -28,7 +33,7 @@ export default {
       })
     },
     //删除权限
-    delRights(rid, rightid, aaa) {
+    delRights(rid, rightid, scope) {
 
 
       this.$http({
@@ -44,9 +49,28 @@ export default {
             message: meta.msg,
             type: 'success'
           })
-          aaa.row.children = data
+          scope.row.children = data
         } else {
           this.$message.error(meta.msg)
+        }
+      })
+    },
+    //打开权限数据
+    openRoles() {
+      this.roleDialog = true
+      this.$http({
+        method: 'get',
+        url: 'rights/tree'
+      }).then(res => {
+        console.log(res);
+
+        let {
+          data,
+          meta
+        } = res.data
+        this.rightsList = data
+        if (res.status == 200) {
+
         }
       })
     }
