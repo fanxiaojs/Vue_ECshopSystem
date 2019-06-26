@@ -10,7 +10,10 @@ export default {
       defaultProps: {
         label: 'authName'
       },
-      morenxuanzhong: []
+      //要默认选中的数据源
+      morenxuanzhong: [],
+      //设置权限角色的ID
+      rid: 0
     }
   },
   components: {
@@ -57,7 +60,8 @@ export default {
       })
     },
     //打开权限数据
-    openRoles(rightsData) {
+    openRoles(rightsData, id) {
+      this.rid = id
       this.morenxuanzhong = []
       this.$http({
         method: 'get',
@@ -89,6 +93,50 @@ export default {
           this.$message.error(meta.msg)
         }
       })
+    },
+    //设置权限
+    setRightsFn() {
+
+
+
+      //获取更新后的权限               
+      //getCheckedNodes: 只会得到全选的ID 不会得得到半选的
+      //getHalfCheckedNodes: 只会得到半选的ID 不会得到全选的
+      let idsA = this.$refs.tree.getCheckedKeys()
+      let idsH = this.$refs.tree.getHalfCheckedKeys()
+      //将全选和半选组合起来
+      let ids = [...idsA, ...idsH]
+      //将ids转成字符串
+      ids = ids.join(',')
+      console.log(this.rid);
+      console.log(idsA);
+      console.log(idsH);
+      console.log(ids);
+
+      this.$http({
+        method: 'post',
+        url: `roles/${this.rid}/rights`,
+        data: {
+          rids: ids
+        }
+      }).then(res => {
+        let {
+          meta,
+          data
+        } = res.data
+        console.log(res);
+
+        if (meta.status == 200) {
+          this.$message({
+            message: meta.msg,
+            type: 'success'
+          })
+          this.getdata()
+        } else {
+          this.$message.error(meta.msg)
+        }
+      })
+      this.roleDialog = false
     }
   },
   mounted() {
