@@ -1,5 +1,9 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+//单独引入
+import {
+  message
+} from 'element-ui'
 
 //引入对应的组件
 import Home from '@/components/home/home.vue'
@@ -7,6 +11,10 @@ import Login from '@/components/login/login.vue'
 import Users from '../components/users/users.vue'
 import Rights from '../components/rights/rights.vue'
 import Roles from '../components/roles/roles.vue'
+import Categories from '../components/categories/categories.vue'
+import {
+  Message
+} from '_element-ui@2.9.1@element-ui';
 Vue.use(Router)
 
 let router = new Router({
@@ -33,6 +41,10 @@ let router = new Router({
         {
           path: '/roles',
           component: Roles
+        },
+        {
+          path: '/categories',
+          component: Categories
         }
       ]
     }
@@ -50,7 +62,7 @@ router.beforeEach((to, from, next) => {
     let token = localStorage.getItem('token')
     //判断:是否存在token
     if (!token) {
-      // this.$messges.error('请先登录')
+      Message.error('请先登录')
       //跳转到Login路由
       router.push('/login')
     } else {
