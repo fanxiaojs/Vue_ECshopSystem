@@ -28,13 +28,13 @@
     </el-table>
     <!-- 分页区域 -->
     <el-pagination
-      @size-change="1"
-      @current-change="2"
+      @size-change="sizeC"
+      @current-change="crrC"
       :current-page="pagenum"
-      :page-sizes="[100, 200, 300, 400]"
-      :page-size="100"
+      :page-sizes="pagesizes"
+      :page-size="pagesize"
       layout="total, sizes, prev, pager, next, jumper"
-      :total="400"
+      :total="total"
     ></el-pagination>
   </el-card>
 </template>
@@ -53,7 +53,7 @@ export default {
       //表格的数据源
       tableData: [],
       //控制分页
-      pagesizes: [],
+      pagesizes: [10, 15, 20],
       //总条数
       total: 0,
       //当前页
@@ -67,7 +67,7 @@ export default {
     getdata() {
       this.$http({
         //请求方式是get 可以省略
-        url: `goods?qurey=${this.qurey}&pagenum=${this.pagenum}&pagesize=${
+        url: `goods?query=${this.qurey}&pagenum=${this.pagenum}&pagesize=${
           this.pagesize
         }`
       }).then(res => {
@@ -79,6 +79,20 @@ export default {
           this.$message.error(meta.msg);
         }
       });
+    },
+    //也容量变化时候
+    sizeC(pagesize) {
+      this.pagesize = pagesize;
+      this.getdata();
+    },
+    //当前页变化时
+    crrC(pagenum) {
+      this.pagenum = pagenum;
+      this.getdata();
+    },
+    //搜索功能
+    search() {
+      this.getdata();
     },
     openAdd() {}
   },
