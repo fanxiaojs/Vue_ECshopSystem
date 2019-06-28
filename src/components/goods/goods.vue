@@ -94,7 +94,9 @@ export default {
     search() {
       this.getdata();
     },
-    openAdd() {}
+    openAdd() {
+      this.$router.push("/goodsAdd");
+    }
   },
   mounted() {
     //开启页面则获取数据

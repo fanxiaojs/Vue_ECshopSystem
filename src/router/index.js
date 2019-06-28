@@ -16,6 +16,7 @@ import {
   Message
 } from '_element-ui@2.9.1@element-ui';
 import Goods from '../components/goods/goods.vue'
+import GoodsAdd from '../components/goods/goodsAdd.vue'
 Vue.use(Router)
 
 let router = new Router({
@@ -50,6 +51,10 @@ let router = new Router({
         {
           path: '/goods',
           component: Goods
+        },
+        {
+          path: '/goodsAdd',
+          component: GoodsAdd
         }
       ]
     }
