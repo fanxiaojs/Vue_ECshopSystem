@@ -62,7 +62,19 @@
           </el-form-item>
         </el-form>
       </el-tab-pane>
-      <el-tab-pane label="商品图片" name="fourth">商品图片</el-tab-pane>
+      <el-tab-pane label="商品图片" name="fourth">
+        <el-upload
+          :on-remove="remove"
+          class="upload-demo"
+          :on-success="upsuccess"
+          :headers="headers"
+          action="http://localhost:8888/api/private/v1/upload"
+          list-type="picture"
+        >
+          <el-button size="small" type="primary">点击上传</el-button>
+          {{upimg}}
+        </el-upload>
+      </el-tab-pane>
       <el-tab-pane label="商品内容" name="fiveth">商品内容</el-tab-pane>
     </el-tabs>
   </el-card>
@@ -91,7 +103,13 @@ export default {
       //商品属性
       goodsOnly: [],
       //控制多选框是否被勾选
-      checked: true
+      checked: true,
+      //设置上传的请求头
+      headers: {
+        Authorization: localStorage.getItem("token")
+      },
+      //上传图片的集合
+      upimg: []
     };
   },
   methods: {
@@ -153,6 +171,21 @@ export default {
           this.catdata = data;
         } else {
           this.$message.error(meta.msg);
+        }
+      });
+    },
+    //图片上传成执行
+    upsuccess(response, file, fileList) {
+      console.log(file);
+      console.log(response);
+      console.log(fileList);
+      let { data } = file.response;
+      this.upimg.push(data.tmp_path);
+    },
+    remove(file, fileList) {
+      this.fileList.forEach((item, index) => {
+        if (item == img) {
+          this.fileList.splice(index, 1);
         }
       });
     }
