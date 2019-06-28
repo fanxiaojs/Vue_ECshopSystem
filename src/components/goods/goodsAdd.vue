@@ -20,9 +20,48 @@
     </el-steps>
     <!-- 标签页 -->
     <el-tabs v-model="activeName" @tab-click="tabC" tabPosition="left">
-      <el-tab-pane label="基本信息" name="first">基本信息</el-tab-pane>
-      <el-tab-pane label="商品参数" name="second">商品参数</el-tab-pane>
-      <el-tab-pane label="商品属性" name="third">商品属性</el-tab-pane>
+      <el-tab-pane label="基本信息" name="first">
+        <!-- 第一个tab的内容 -->
+        <el-form ref="ruleForm" label-width="100px" class="demo-ruleForm" label-position="top">
+          <el-form-item label="商品名称" prop="name">
+            <el-input></el-input>
+          </el-form-item>
+          <el-form-item label="商品价格" prop="name">
+            <el-input></el-input>
+          </el-form-item>
+          <el-form-item label="商品重量" prop="name">
+            <el-input></el-input>
+          </el-form-item>
+          <el-form-item label="商品数量" prop="name">
+            <el-input></el-input>
+          </el-form-item>
+          <el-form-item label="商品分类" prop="name">
+            <!-- 级联选择器 -->
+            <el-cascader v-model="catval" :options="catdata" :props="props"></el-cascader>
+          </el-form-item>
+        </el-form>
+      </el-tab-pane>
+      <el-tab-pane label="商品参数" name="second">
+        <div class="txt" v-for="(item,index) in goodsMany" :key="index">
+          <div>{{item.attr_name}}</div>
+          <div>
+            <el-checkbox
+              v-for="(val,index) in item.attr_vals.split(',') "
+              :key="index"
+              v-model="checked"
+              label="备选项1"
+              border
+            >{{val}}</el-checkbox>
+          </div>
+        </div>
+      </el-tab-pane>
+      <el-tab-pane label="商品属性" name="third">
+        <el-form ref="ruleForm" label-width="100px" class="demo-ruleForm" label-position="top">
+          <el-form-item v-for="(item,index) in goodsOnly" :key="index" :label="item.attr_name">
+            <el-input v-model="item.attr_vals"></el-input>
+          </el-form-item>
+        </el-form>
+      </el-tab-pane>
       <el-tab-pane label="商品图片" name="fourth">商品图片</el-tab-pane>
       <el-tab-pane label="商品内容" name="fiveth">商品内容</el-tab-pane>
     </el-tabs>
@@ -40,7 +79,19 @@ export default {
       //设置步骤条的默认选中项
       active: 0,
       //设置tba默认选中项
-      activeName: "first"
+      activeName: "first",
+      //分类级联选择器的数据源
+      catdata: [],
+      //级联选择器的配置项
+      props: { expandTrigger: "hover", label: "cat_name", value: "cat_id" },
+      //级联选择器中的数据
+      catval: [],
+      //商品参数
+      goodsMany: [],
+      //商品属性
+      goodsOnly: [],
+      //控制多选框是否被勾选
+      checked: true
     };
   },
   methods: {
@@ -48,7 +99,66 @@ export default {
     tabC(tag) {
       //让步骤条与tab同步
       this.active = +tag.index;
+      //商品参数
+      if (tag.index == "1") {
+        //判断级联选择器是否选中内容
+        if (this.catval.length != 0) {
+          //根据分类查询参数
+          this.$http({
+            url: `categories/${
+              this.catval[this.catval.length - 1]
+            }/attributes?sel=many`
+          }).then(res => {
+            let { meta, data } = res.data;
+            if (meta.status == 200) {
+              //保存商品参数
+              this.goodsMany = data;
+            } else {
+              this.$message.error(meta.msg);
+            }
+          });
+        } else {
+          this.$message.error("请选择商品分类");
+        }
+      }
+      if (tag.index == "2") {
+        //判断级联选择器是否选中内容
+        if (this.catval.length != 0) {
+          //根据分类查询参数
+          this.$http({
+            url: `categories/${
+              this.catval[this.catval.length - 1]
+            }/attributes?sel=only`
+          }).then(res => {
+            let { meta, data } = res.data;
+            if (meta.status == 200) {
+              //保存商品参数
+              this.goodsOnly = data;
+            } else {
+              this.$message.error(meta.msg);
+            }
+          });
+        } else {
+          this.$message.error("请选择商品分类");
+        }
+      }
+    },
+    //得到级联选择器的数据源
+    getcatdata() {
+      this.$http({
+        url: "categories"
+      }).then(res => {
+        let { meta, data } = res.data;
+        if (meta.status == 200) {
+          this.catdata = data;
+        } else {
+          this.$message.error(meta.msg);
+        }
+      });
     }
+  },
+  mounted() {
+    this.getcatdata();
   }
 };
 </script>
@@ -59,6 +169,14 @@ export default {
   margin-bottom: 15px;
 }
 .el-step__title.is-wait {
+  font-size: 14px;
+}
+.el-checkbox.is-bordered.is-checked {
+  margin-right: 0;
+  margin-top: 5px;
+}
+.txt {
+  margin: 25px 0;
   font-size: 14px;
 }
 </style>
